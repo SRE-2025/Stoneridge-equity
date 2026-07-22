@@ -1,0 +1,16 @@
+{
+  "name": "stoneridge-equity",
+  "version": "1.0.0",
+  "description": "A fast, dependency-free marketing site for **Stoneridge Equity**, a private equity firm based in Austin, Texas. Static HTML/CSS/JS — no build step, no framework. The design is tuned to feel established and institutional (in the spirit of Blackstone / Warburg Pincus) with a few creative, motion-forward touches (in the spirit of ATX Venture Partners).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "sharp": "^0.35.3"
+  }
+}

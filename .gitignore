@@ -1,0 +1,13 @@
+# Dependencies (sharp was only used to process logo images at build time)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Large original source art (kept locally, not needed for the live site)
+assets/img/logo-large.png
+assets/img/logo-equity-source.jpg

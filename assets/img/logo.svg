@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" role="img" aria-label="Stoneridge Equity">
+  <!-- Ridge badge -->
+  <path d="M100 14 L182 148 C190 161 183 173 168 173 L32 173 C17 173 10 161 18 148 Z"
+        fill="#f2efe6" stroke="#33492b" stroke-width="13" stroke-linejoin="round"/>
+  <!-- Mountain peak -->
+  <path d="M40 165 L88 92 L112 128 L140 84 L168 165 Z" fill="#5f7a4f"/>
+  <!-- Ridge shadow -->
+  <path d="M88 92 L112 128 L104 165 L82 165 Z" fill="#465e38" opacity="0.8"/>
+  <!-- Wordmark -->
+  <text x="100" y="196" text-anchor="middle" font-family="Oswald, 'Saira Condensed', sans-serif"
+        font-weight="700" font-size="30" letter-spacing="2" fill="#2f4626">STONERIDGE</text>
+  <text x="100" y="209" text-anchor="middle" font-family="Oswald, 'Saira Condensed', sans-serif"
+        font-weight="600" font-size="15" letter-spacing="6" fill="#a5673f">EQUITY</text>
+</svg>
