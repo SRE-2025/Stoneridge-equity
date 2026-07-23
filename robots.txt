@@ -1,0 +1,14 @@
+# Stoneridge Equity — PRE-LAUNCH.
+# The site is intentionally hidden from search engines while content is
+# still placeholder (illustrative figures, portfolio, and case study).
+#
+# ===> TO GO PUBLIC when the real content is in:
+#   1. Replace "Disallow: /" below with "Allow: /"
+#   2. Remove the <meta name="robots" content="noindex, follow" /> tag
+#      from every page (it sits inside the <!-- seo:start --> block).
+#   3. Submit sitemap.xml in Google Search Console.
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://stoneridge-equity.com/sitemap.xml
