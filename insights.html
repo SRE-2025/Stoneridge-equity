@@ -88,12 +88,14 @@
   <section class="section on-dark">
     <div class="wrap split" style="align-items:center">
       <div data-reveal><p class="index-label"><b>Stay informed</b></p><h2 class="section-title" style="margin-top:1.2rem">Our thinking,<br>in your inbox.</h2></div>
-      <form class="stack" data-reveal data-reveal-delay="1" data-contact-form onsubmit="return false">
+      <form class="stack" data-reveal data-reveal-delay="1" data-ajax-form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="hidden" name="_subject" value="New newsletter subscriber — Stoneridge Equity" />
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <p class="muted">A few times a year, we share our perspective on private markets and the sectors we know best. No noise.</p>
-        <div class="field" style="margin-top:12px"><label for="nl">Email address</label><input id="nl" type="email" placeholder="you@company.com" required /></div>
+        <div class="field" style="margin-top:12px"><label for="nl">Email address</label><input id="nl" name="Email" type="email" placeholder="you@company.com" required /></div>
         <div><button class="btn btn--primary" type="submit">Subscribe
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-        <p class="muted" data-form-note hidden style="font-size:0.88rem;color:var(--bronze-2)"></p>
+        <p class="form-note" data-form-note role="status"></p>
       </form>
     </div>
   </section>
@@ -109,7 +111,7 @@
         </a>
         <p>Private equity, built to endure. Partnering with exceptional lower-middle-market companies from our home in Austin, Texas.</p>
       </div>
-      <div class="footer-col"><h4>Firm</h4><a href="firm.html">Our story</a><a href="approach.html">Approach</a><a href="team.html">Team</a><a href="insights.html">Insights</a></div>
+      <div class="footer-col"><h4>Firm</h4><a href="firm.html">Our story</a><a href="approach.html">Approach</a><a href="team.html">Team</a><a href="careers.html">Careers</a><a href="insights.html">Insights</a></div>
       <div class="footer-col"><h4>Investing</h4><a href="portfolio.html">Portfolio</a><a href="approach.html">Investment criteria</a><a href="contact.html">For founders</a><a href="contact.html">For intermediaries</a></div>
       <div class="footer-col"><h4>Connect</h4><a href="contact.html">Contact</a><a href="mailto:inquiries@stoneridge-equity.com">inquiries@stoneridge-equity.com</a><a href="#">Investor Login</a><a href="https://www.linkedin.com/" rel="noopener">LinkedIn</a></div>
     </div>

@@ -84,24 +84,46 @@
     counters.forEach(function (el) { co.observe(el); });
   }
 
-  /* ---- Contact form (front-end only demo) ---------------------------- */
-  var form = document.querySelector("[data-contact-form]");
-  if (form) {
+  /* ---- Forms → Formspree (with graceful demo fallback) --------------- */
+  document.querySelectorAll("[data-ajax-form]").forEach(function (form) {
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       var note = form.querySelector("[data-form-note]");
       var btn = form.querySelector("button[type=submit]");
+      var action = form.getAttribute("action") || "";
+      var demo = !action || action.indexOf("YOUR_FORM_ID") !== -1;
+      var label = btn ? btn.textContent : "";
+      var setNote = function (msg, ok) {
+        if (!note) return;
+        note.textContent = msg;
+        note.className = "form-note show " + (ok ? "ok" : "err");
+      };
+      var restore = function () { if (btn) { btn.disabled = false; btn.textContent = label; } };
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
-      window.setTimeout(function () {
-        form.reset();
-        if (btn) { btn.disabled = false; btn.textContent = "Send inquiry"; }
-        if (note) {
-          note.hidden = false;
-          note.textContent = "Thank you. Your note has reached our team — we respond to every serious inquiry within two business days.";
-        }
-      }, 900);
+
+      if (demo) {
+        window.setTimeout(function () {
+          form.reset(); restore();
+          setNote("Thank you — your note has reached us. (Demo mode: connect a Formspree endpoint to start receiving these by email.)", true);
+        }, 800);
+        return;
+      }
+
+      fetch(action, { method: "POST", body: new FormData(form), headers: { "Accept": "application/json" } })
+        .then(function (r) {
+          if (r.ok) {
+            form.reset();
+            setNote("Thank you. Your message has reached our team — we respond to every serious inquiry within two business days.", true);
+          } else {
+            return r.json().then(function (d) {
+              setNote((d && d.errors && d.errors[0] && d.errors[0].message) || "Something went wrong. Please email us directly.", false);
+            });
+          }
+        })
+        .catch(function () { setNote("Network error — please email us directly.", false); })
+        .then(restore);
     });
-  }
+  });
 
   /* ---- Rotating creed (hero) ----------------------------------------- */
   document.querySelectorAll("[data-rotator]").forEach(function (rot) {
