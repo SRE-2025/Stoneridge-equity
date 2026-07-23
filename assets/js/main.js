@@ -125,6 +125,23 @@
     });
   });
 
+  /* ---- Prefill contact form from the Fit Finder ---------------------- */
+  try {
+    var fitMsg = sessionStorage.getItem("sre_fit_msg");
+    if (fitMsg) {
+      var roleSel = document.querySelector('form [name="I am reaching out as"]');
+      if (roleSel) {
+        var cForm = roleSel.closest("form");
+        var msgField = cForm.querySelector('[name="Message"]');
+        if (msgField && !msgField.value) msgField.value = fitMsg;
+        roleSel.value = "A founder or business owner";
+        var fnote = cForm.querySelector("[data-form-note]");
+        if (fnote) { fnote.textContent = "We've pre-filled your Fit Finder summary below — edit anything, then send."; fnote.className = "form-note show ok"; }
+        sessionStorage.removeItem("sre_fit_msg");
+      }
+    }
+  } catch (e) {}
+
   /* ---- Rotating creed (hero) ----------------------------------------- */
   document.querySelectorAll("[data-rotator]").forEach(function (rot) {
     var items = rot.querySelectorAll(".rotator__item");
