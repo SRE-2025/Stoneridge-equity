@@ -101,15 +101,12 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
 <script>
-(function () {
-  "use strict";
-  var body = document.getElementById("fitBody");
-  var bar = document.getElementById("fitBar");
-  if (!body) return;
-
-  var Q = [
+window.FIT_CONFIG = {
+  introTitle: "Let's find out — honestly.",
+  introText: "Six quick questions. We'll tell you straight whether we're a fit, and what a partnership could look like for you. No email needed to see your result.",
+  startLabel: "Start",
+  questions: [
     { id: "goal", q: "What are you hoping to do?", cols: 1, opts: [
       { v: "capital", label: "Raise capital to grow faster" },
       { v: "sale", label: "Explore a full or partial sale" },
@@ -133,177 +130,66 @@
     { id: "timing", q: "What's your timeline?", cols: 1, opts: [
       { v: "t_now", label: "Actively exploring now" }, { v: "t_soon", label: "In the next 6–12 months" },
       { v: "t_plan", label: "Just planning ahead" } ] }
-  ];
-
-  var LABEL = {
-    capital: "raise capital to grow", sale: "explore a sale", next: "reach your next level", explore: "explore your options",
-    r1: "under $10M", r2: "$10–50M", r3: "$50–150M", r4: "over $150M",
-    e1: "under $3M", e2: "$3–10M", e3: "$10–40M", e4: "over $40M", e0: "pre-profit / unsure",
-    s_tech: "software & technology", s_ind: "industrial", s_health: "healthcare services", s_svc: "business services",
-    s_cons: "consumer", s_fin: "financial services", s_other: "company",
-    o_lead: "stay and lead", o_trans: "stay through a transition", o_back: "step back", o_unsure: "figure out the right role",
-    t_now: "now", t_soon: "6–12 months", t_plan: "planning ahead"
-  };
-
-  var answers = {}, step = -1; // -1 = intro
-
-  function setBar() {
-    var pct = step < 0 ? 0 : Math.round(((step) / Q.length) * 100);
-    if (step >= Q.length) pct = 100;
-    bar.style.width = pct + "%";
-  }
-
-  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-
-  function renderIntro() {
-    step = -1; setBar();
-    body.innerHTML = "";
-    var wrap = el("div", "fit__intro");
-    wrap.appendChild(el("h3", null, "Let's find out — honestly."));
-    wrap.appendChild(el("p", null, "Six quick questions. We'll tell you straight whether we're a fit, and what a partnership could look like for you. No email needed to see your result."));
-    var start = el("button", "btn btn--primary");
-    start.type = "button";
-    start.innerHTML = 'Start &nbsp;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-    start.addEventListener("click", function () { step = 0; renderStep(); });
-    wrap.appendChild(start);
-    var s = el("div", "fit__step active"); s.appendChild(wrap); body.appendChild(s);
-  }
-
-  function renderStep() {
-    setBar();
-    var q = Q[step];
-    body.innerHTML = "";
-    var s = el("div", "fit__step active");
-    s.appendChild(el("p", "fit__count", "Question " + (step + 1) + " of " + Q.length));
-    s.appendChild(el("h2", "fit__q", q.q));
-    var opts = el("div", "fit__options" + (q.cols === 2 ? " two" : ""));
-    q.opts.forEach(function (o) {
-      var b = el("button", "fit__opt" + (answers[q.id] === o.v ? " sel" : ""));
-      b.type = "button";
-      b.innerHTML = '<span class="dot"></span><span>' + o.label + "</span>";
-      b.addEventListener("click", function () {
-        answers[q.id] = o.v;
-        [].forEach.call(opts.children, function (c) { c.classList.remove("sel"); });
-        b.classList.add("sel");
-        window.setTimeout(function () {
-          if (step < Q.length - 1) { step++; renderStep(); }
-          else { step = Q.length; renderResult(); }
-        }, 260);
-      });
-      opts.appendChild(b);
-    });
-    s.appendChild(opts);
-    var nav = el("div", "fit__nav");
-    var back = el("button", "fit__back");
-    back.type = "button";
-    back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Back';
-    if (step === 0) back.hidden = true;
-    back.addEventListener("click", function () { if (step > 0) { step--; renderStep(); } else { renderIntro(); } });
-    nav.appendChild(back);
-    nav.appendChild(el("span", "fit__count", "Pick one"));
-    s.appendChild(nav);
-    body.appendChild(s);
-  }
-
-  function tierOf(a) {
+  ],
+  result: function (a, labelFull) {
+    var L = { capital: "raise capital to grow", sale: "explore a sale", next: "reach your next level", explore: "explore your options",
+      r1: "under $10M", r2: "$10–50M", r3: "$50–150M", r4: "over $150M",
+      e1: "under $3M", e2: "$3–10M", e3: "$10–40M", e4: "over $40M", e0: "pre-profit / unsure",
+      s_tech: "software & technology", s_ind: "industrial", s_health: "healthcare services", s_svc: "business services",
+      s_cons: "consumer", s_fin: "financial services", s_other: "company",
+      o_lead: "stay and lead", o_trans: "stay through a transition", o_back: "step back", o_unsure: "figure out the right role",
+      t_now: "now", t_soon: "6–12 months", t_plan: "planning ahead" };
     var coreEbitda = (a.ebitda === "e2" || a.ebitda === "e3");
     var sectorOk = a.sector && a.sector !== "s_other";
     var goalOk = a.goal && a.goal !== "explore";
-    if (coreEbitda && sectorOk && goalOk) return "strong";
-    if (a.ebitda === "e1" || a.ebitda === "e0") {
-      if (a.revenue === "r3" || a.revenue === "r4") return "maybe";
-      return "early";
-    }
-    return "maybe";
-  }
+    var tier = "maybe";
+    if (coreEbitda && sectorOk && goalOk) tier = "strong";
+    else if (a.ebitda === "e1" || a.ebitda === "e0") tier = (a.revenue === "r3" || a.revenue === "r4") ? "maybe" : "early";
 
-  function bullets(a, tier) {
-    var out = [];
-    if (tier === "early") {
-      out.push("We usually partner a little later in a company's life — but we love meeting founders early and staying close as you grow.");
-      out.push("If you're raising or planning ahead, an early conversation costs nothing and can shape what comes next.");
-      out.push("Every Stoneridge partner invests personally in each fund — when we do partner, our incentives are yours.");
-      return out;
-    }
-    if (a.goal === "capital") out.push("Growth capital to accelerate — hiring, new markets, or acquisitions — without giving up the wheel.");
-    else if (a.goal === "sale") out.push("A full or partial sale to a partner who will steward what you built, not strip it for parts.");
-    else if (a.goal === "next") out.push("Hands-on operating help — go-to-market, talent, and systems — from people who've actually built companies.");
-    else out.push("A candid, no-pressure conversation about the paths available to you and what each would mean.");
-
-    if (a.ownership === "o_lead") out.push("You keep leading. We back you and stay out of the way where it matters.");
-    else if (a.ownership === "o_trans") out.push("A transition on your timeline, not ours.");
-    else if (a.ownership === "o_back") out.push("We help bring in leadership so you can step back with confidence.");
-
-    if (tier === "strong" && a.sector && a.sector !== "s_other") out.push("Deep focus in " + LABEL[a.sector] + " — it's one of our core sectors, so we already know your world.");
-    else out.push("Every Stoneridge partner invests personally in each fund — our incentives match yours from day one.");
-    return out.slice(0, 3);
-  }
-
-  function renderResult() {
-    setBar();
-    var a = answers, tier = tierOf(a);
-    var badge = { strong: ["strong", "Strong fit"], maybe: ["maybe", "Worth a conversation"], early: ["early", "We may be a bit early"] }[tier];
+    var badge = { strong: { cls: "strong", label: "Strong fit" }, maybe: { cls: "maybe", label: "Worth a conversation" }, early: { cls: "early", label: "We may be a bit early" } }[tier];
     var head = { strong: "This looks like a strong fit.", maybe: "This is worth a conversation.", early: "We might be a little early — but let's stay close." }[tier];
 
-    var sectorLabel = (a.sector === "s_other" || !a.sector) ? "company" : LABEL[a.sector] + " business";
-    var revPhrase = a.revenue ? " around " + LABEL[a.revenue] + " in revenue" : "";
-    var ownPhrase = (a.ownership && a.ownership !== "o_unsure") ? ", while you " + LABEL[a.ownership] : "";
-    var summary = "You're a " + sectorLabel + revPhrase + ", looking to " + LABEL[a.goal] + ownPhrase + ".";
+    var sectorLabel = (a.sector === "s_other" || !a.sector) ? "company" : L[a.sector] + " business";
+    var revPhrase = a.revenue ? " around " + L[a.revenue] + " in revenue" : "";
+    var ownPhrase = (a.ownership && a.ownership !== "o_unsure") ? ", while you " + L[a.ownership] : "";
+    var summary = "You're a " + sectorLabel + revPhrase + ", looking to " + L[a.goal] + ownPhrase + ". Here's how a partnership with Stoneridge could look:";
 
-    var bl = bullets(a, tier);
+    var b = [];
+    if (tier === "early") {
+      b = ["We usually partner a little later in a company's life — but we love meeting founders early and staying close as you grow.",
+        "If you're raising or planning ahead, an early conversation costs nothing and can shape what comes next.",
+        "Every Stoneridge partner invests personally in each fund — when we do partner, our incentives are yours."];
+    } else {
+      if (a.goal === "capital") b.push("Growth capital to accelerate — hiring, new markets, or acquisitions — without giving up the wheel.");
+      else if (a.goal === "sale") b.push("A full or partial sale to a partner who will steward what you built, not strip it for parts.");
+      else if (a.goal === "next") b.push("Hands-on operating help — go-to-market, talent, and systems — from people who've actually built companies.");
+      else b.push("A candid, no-pressure conversation about the paths available to you and what each would mean.");
+      if (a.ownership === "o_lead") b.push("You keep leading. We back you and stay out of the way where it matters.");
+      else if (a.ownership === "o_trans") b.push("A transition on your timeline, not ours.");
+      else if (a.ownership === "o_back") b.push("We help bring in leadership so you can step back with confidence.");
+      if (tier === "strong" && sectorOk) b.push("Deep focus in " + L[a.sector] + " — it's one of our core sectors, so we already know your world.");
+      else b.push("Every Stoneridge partner invests personally in each fund — our incentives match yours from day one.");
+      b = b.slice(0, 3);
+    }
 
-    body.innerHTML = "";
-    var s = el("div", "fit__step active fit__result");
-    s.appendChild(el("span", "fit__badge " + badge[0], badge[1]));
-    s.appendChild(el("h3", null, head));
-    s.appendChild(el("p", "fit__summary", summary + " Here's how a partnership with Stoneridge could look:"));
-    var ul = el("ul", "fit__bullets");
-    bl.forEach(function (t) {
-      var li = document.createElement("li");
-      li.innerHTML = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M20 6L9 17l-5-5"/></svg><span>' + t + "</span>";
-      ul.appendChild(li);
-    });
-    s.appendChild(ul);
-
-    // Build a warm, pre-filled message for the contact form
     var msg = "Hi Stoneridge team — I just used your Fit Finder and wanted to reach out.\n\n" +
       "• Goal: " + labelFull("goal", a.goal) + "\n" +
-      "• Revenue: " + (a.revenue ? LABEL[a.revenue] : "—") + "\n" +
-      "• EBITDA: " + (a.ebitda ? LABEL[a.ebitda] : "—") + "\n" +
+      "• Revenue: " + (a.revenue ? L[a.revenue] : "—") + "\n" +
+      "• EBITDA: " + (a.ebitda ? L[a.ebitda] : "—") + "\n" +
       "• Sector: " + labelFull("sector", a.sector) + "\n" +
       "• Preferred role after a deal: " + labelFull("ownership", a.ownership) + "\n" +
-      "• Timeline: " + (a.timing ? LABEL[a.timing] : "—") + "\n\n" +
+      "• Timeline: " + (a.timing ? L[a.timing] : "—") + "\n\n" +
       "I'd love to start a conversation.";
-    try { sessionStorage.setItem("sre_fit_msg", msg); } catch (e) {}
 
-    var cta = el("div", "fit__cta");
-    var go = document.createElement("a");
-    go.className = "btn btn--primary";
-    go.href = "contact.html";
-    go.innerHTML = 'Start the conversation &nbsp;<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-    cta.appendChild(go);
-    var approach = document.createElement("a");
-    approach.className = "btn btn--ghost";
-    approach.href = "approach.html";
-    approach.textContent = "How we partner";
-    cta.appendChild(approach);
-    var restart = el("button", "fit__restart", "Start over");
-    restart.type = "button";
-    restart.addEventListener("click", function () { answers = {}; renderIntro(); });
-    cta.appendChild(restart);
-    s.appendChild(cta);
-    body.appendChild(s);
+    return {
+      badge: badge, headline: head, summary: summary, bullets: b,
+      cta: [{ href: "contact.html", label: "Start the conversation", primary: true }, { href: "approach.html", label: "How we partner" }],
+      handoff: { key: "sre_contact_msg", message: msg, extraKey: "sre_contact_role", extraVal: "A founder or business owner" }
+    };
   }
-
-  function labelFull(id, v) {
-    if (!v) return "—";
-    var q = Q.filter(function (x) { return x.id === id; })[0];
-    var o = q.opts.filter(function (x) { return x.v === v; })[0];
-    return o ? o.label : "—";
-  }
-
-  renderIntro();
-})();
+};
 </script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/fit.js"></script>
 </body>
 </html>

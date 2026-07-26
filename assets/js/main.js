@@ -125,22 +125,28 @@
     });
   });
 
-  /* ---- Prefill contact form from the Fit Finder ---------------------- */
-  try {
-    var fitMsg = sessionStorage.getItem("sre_fit_msg");
-    if (fitMsg) {
-      var roleSel = document.querySelector('form [name="I am reaching out as"]');
-      if (roleSel) {
-        var cForm = roleSel.closest("form");
-        var msgField = cForm.querySelector('[name="Message"]');
-        if (msgField && !msgField.value) msgField.value = fitMsg;
-        roleSel.value = "A founder or business owner";
-        var fnote = cForm.querySelector("[data-form-note]");
-        if (fnote) { fnote.textContent = "We've pre-filled your Fit Finder summary below — edit anything, then send."; fnote.className = "form-note show ok"; }
-        sessionStorage.removeItem("sre_fit_msg");
-      }
-    }
-  } catch (e) {}
+  /* ---- Prefill forms from a Fit Finder hand-off ---------------------- */
+  function prefill(msgKey, selName, selKey, roleKey) {
+    try {
+      var msg = sessionStorage.getItem(msgKey);
+      if (!msg) return;
+      var sel = document.querySelector("form [name=\"" + selName + "\"]");
+      if (!sel) return;
+      var form = sel.closest("form");
+      var field = form.querySelector('[name="Message"]');
+      if (field && !field.value) field.value = msg;
+      var role = sessionStorage.getItem(roleKey);
+      if (role) sel.value = role;
+      var note = form.querySelector("[data-form-note]");
+      if (note) { note.textContent = "We've pre-filled your details below — edit anything, then send."; note.className = "form-note show ok"; }
+      sessionStorage.removeItem(msgKey);
+      sessionStorage.removeItem(roleKey);
+    } catch (e) {}
+  }
+  // contact form (founders / investors)
+  prefill("sre_contact_msg", "I am reaching out as", null, "sre_contact_role");
+  // careers form (talent)
+  prefill("sre_talent_msg", "Area of interest", null, "sre_talent_role");
 
   /* ---- Rotating creed (hero) ----------------------------------------- */
   document.querySelectorAll("[data-rotator]").forEach(function (rot) {
