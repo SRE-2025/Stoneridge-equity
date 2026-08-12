@@ -1,0 +1,10 @@
+# Cloudflare Pages security headers (governance baseline).
+# Applied to every route. Safe, non-breaking set — no CSP yet so nothing
+# on the site can be blocked; CSP can be layered on later once verified.
+/*
+  Strict-Transport-Security: max-age=15552000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  X-Robots-Tag: noindex
