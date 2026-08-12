@@ -84,15 +84,17 @@
     counters.forEach(function (el) { co.observe(el); });
   }
 
-  /* ---- Forms → Formspree (with graceful demo fallback) --------------- */
+  /* ---- Forms → Google Apps Script / Formspree (graceful demo) -------- */
   document.querySelectorAll("[data-ajax-form]").forEach(function (form) {
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
       var note = form.querySelector("[data-form-note]");
       var btn = form.querySelector("button[type=submit]");
       var action = form.getAttribute("action") || "";
-      var demo = !action || action.indexOf("YOUR_FORM_ID") !== -1;
+      var isDemo = !action || action.indexOf("YOUR_FORM_ID") !== -1 || action.indexOf("SCRIPT_URL") !== -1;
+      var isScript = action.indexOf("script.google.com") !== -1;
       var label = btn ? btn.textContent : "";
+      var okMsg = "Thank you. Your message has reached our team — we respond to every serious inquiry within two business days.";
       var setNote = function (msg, ok) {
         if (!note) return;
         note.textContent = msg;
@@ -101,24 +103,32 @@
       var restore = function () { if (btn) { btn.disabled = false; btn.textContent = label; } };
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
 
-      if (demo) {
+      if (isDemo) {
         window.setTimeout(function () {
           form.reset(); restore();
-          setNote("Thank you — your note has reached us. (Demo mode: connect a Formspree endpoint to start receiving these by email.)", true);
+          setNote("Thank you — your note has reached us. (Demo mode: connect your form endpoint to start receiving these by email.)", true);
         }, 800);
         return;
       }
 
+      if (isScript) {
+        // Google Apps Script Web App — no-cors + url-encoded. The response is
+        // opaque (browsers can't read cross-origin Apps Script replies), so we
+        // show success optimistically; the email sends and the row logs server-side.
+        var params = new URLSearchParams();
+        new FormData(form).forEach(function (v, k) { params.append(k, v); });
+        fetch(action, { method: "POST", mode: "no-cors", body: params })
+          .then(function () { form.reset(); setNote(okMsg, true); })
+          .catch(function () { setNote("Network error — please email us directly.", false); })
+          .then(restore);
+        return;
+      }
+
+      // Formspree (CORS JSON)
       fetch(action, { method: "POST", body: new FormData(form), headers: { "Accept": "application/json" } })
         .then(function (r) {
-          if (r.ok) {
-            form.reset();
-            setNote("Thank you. Your message has reached our team — we respond to every serious inquiry within two business days.", true);
-          } else {
-            return r.json().then(function (d) {
-              setNote((d && d.errors && d.errors[0] && d.errors[0].message) || "Something went wrong. Please email us directly.", false);
-            });
-          }
+          if (r.ok) { form.reset(); setNote(okMsg, true); }
+          else { return r.json().then(function (d) { setNote((d && d.errors && d.errors[0] && d.errors[0].message) || "Something went wrong. Please email us directly.", false); }); }
         })
         .catch(function () { setNote("Network error — please email us directly.", false); })
         .then(restore);
