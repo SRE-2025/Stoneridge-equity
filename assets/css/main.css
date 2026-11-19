@@ -285,7 +285,8 @@ body.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotat
 .hero .wrap { position: relative; z-index: 2; width: 100%; }
 .hero__title { font-size: clamp(3rem, 8.2vw, 7rem); font-weight: 360; line-height: 0.98; letter-spacing: -0.02em; }
 .hero__title em { font-style: italic; color: var(--bronze-2); }
-.hero__sub { max-width: 52ch; margin-top: 1.6rem; }
+.hero__sub { max-width: 52ch; margin-top: 1.6rem; color: var(--mist); }
+.hero .index-label { color: var(--bronze-2); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 2.4rem; }
 .hero__meta {
   display: flex; flex-wrap: wrap; gap: clamp(24px, 5vw, 72px);
