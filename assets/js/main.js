@@ -31,6 +31,7 @@
       var open = document.body.classList.contains("menu-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
+    document.documentElement.classList.add("nav-ready");
     document.querySelectorAll(".nav a").forEach(function (a) {
       a.addEventListener("click", function () {
         document.body.classList.remove("menu-open");
@@ -45,12 +46,18 @@
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
+          e.target.classList.remove("reveal-pending");
           e.target.classList.add("in");
           io.unobserve(e.target);
         }
       });
     }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-    revealEls.forEach(function (el) { io.observe(el); });
+    revealEls.forEach(function (el) {
+      io.observe(el);
+      if (el.getBoundingClientRect().top > window.innerHeight) {
+        el.classList.add("reveal-pending");
+      }
+    });
   } else {
     revealEls.forEach(function (el) { el.classList.add("in"); });
   }

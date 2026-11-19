@@ -492,12 +492,27 @@ body.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotat
 /* ----------------------------------------------------------------------- */
 /*  16. Reveal animations                                                  */
 /* ----------------------------------------------------------------------- */
-[data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+[data-reveal] { transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out); }
+[data-reveal].reveal-pending { opacity: 0; transform: translateY(26px); }
 [data-reveal].in { opacity: 1; transform: none; }
 [data-reveal-delay="1"] { transition-delay: 0.08s; }
 [data-reveal-delay="2"] { transition-delay: 0.16s; }
 [data-reveal-delay="3"] { transition-delay: 0.24s; }
 [data-reveal-delay="4"] { transition-delay: 0.32s; }
+
+/* Keep the primary links usable while the mobile menu script is loading. */
+@media (max-width: 920px) {
+  html:not(.nav-ready) .nav-toggle { display: none; }
+  html:not(.nav-ready) .site-header { background: var(--ink); color: var(--cream); }
+  html:not(.nav-ready) .site-header__inner { gap: 18px; }
+  html:not(.nav-ready) .nav {
+    position: static; min-width: 0; overflow-x: auto; padding: 6px 0;
+    flex-direction: row; justify-content: flex-start; align-items: center;
+    visibility: visible; opacity: 1; transform: none; transition: none;
+  }
+  html:not(.nav-ready) .nav a { white-space: nowrap; font: 0.9rem var(--sans); }
+  html:not(.nav-ready) .nav__cta { margin: 0; }
+}
 
 /* Progress bar */
 .read-progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--bronze); width: 0; z-index: 200; transition: width 0.1s linear; }
